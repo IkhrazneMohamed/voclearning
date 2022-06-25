@@ -1,16 +1,22 @@
 <template>
-  <div class="hello">
-    <h1>hello world</h1>
-    <button>{{msg}}</button>
+  <div class="header">
+    <h1>VocLearn</h1>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'HelloWorld'
+  name: 'vocLogo'
 }
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.header{
+  width: 1440px;
+  height: 117px;
+  left: 0px;
+  top: 0px;
+  background: #A4A0A0;
+}
 </style>

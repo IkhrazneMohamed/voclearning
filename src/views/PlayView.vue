@@ -1,5 +1,6 @@
 <template>
-  <div @load>
+  <div>
+    <VocLogo></VocLogo>
     <h2></h2>
     <input v-model="testAnswer" type="text" id="vocTest">
     <button id="submit" @click="checkTheWord">Submit</button>
@@ -10,8 +11,10 @@
 </template>
 
 <script>
+
 export default {
   name: 'PlayView',
+  components: ['VocLog'],
   props: [''],
   data () {
     return {
@@ -36,8 +39,8 @@ export default {
   },
   beforeMount () {
     const myHeader = new Headers()
-    myHeader.append('Accept','application/json')
-    myHeader.append('Content-type','application/json')
+    myHeader.append('Accept', 'application/json')
+    myHeader.append('Content-type', 'application/json')
     const requestOptions = {
       methods: 'GET',
       headers: myHeader,
@@ -45,6 +48,7 @@ export default {
     }
     fetch('http://localhost:8080/words', requestOptions)
       .then(response => response.json)
+      .then(result => console.log(result))
       .catch(error => console.log('error', error))
   }
 }

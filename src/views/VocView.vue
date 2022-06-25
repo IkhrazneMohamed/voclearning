@@ -1,15 +1,20 @@
 <template>
+  <VocLogo></VocLogo>
   <div>
-    <input v-model="word" type="text" placeholder="Enter new Word" id="word">
-    <input v-model="translation" type="text" placeholder="Enter a Translation" id="translation">
-    <button id="save" @click="saveDataInDatabase">Save</button>
+    <div>
+      <input v-model="word" type="text" placeholder="Enter new Word" id="word">
+      <input v-model="translation" type="text" placeholder="Enter a Translation" id="translation">
+    </div>
+    <button id="save" @click="saveDataInDatabase">Save</button><br>
     <button id="delete">Delete</button>
   </div>
 </template>
 
 <script>
+import VocLogo from '@/components/VocLog'
 export default {
   name: 'VocView',
+  components: { VocLogo },
   props: [''],
   data () {
     return {
@@ -21,18 +26,18 @@ export default {
     saveDataInDatabase () {
       const myheader = new Headers()
       myheader.append('Content-type', 'application/json')
-      myheader.append('Accept', 'application/json')
       const content = {
-        word: this.word,
+        word: 'run',
         language: 'english',
-        translation: this.translation,
-        tansLanguage: 'translation'
+        translation: 'rennen',
+        transLanguage: 'deutsch'
       }
 
       const requestOptions = {
         method: 'POST',
         headers: myheader,
-        body: JSON.stringify(content)
+        body: content,
+        redirect: 'follow'
       }
       fetch('https://voclearner.herokuapp.com/api/v1/wordtranslation', requestOptions).catch(error => console.log('error', error))
     },
@@ -59,8 +64,15 @@ export default {
   border-style: groove;
   border-color: azure;
   border-radius: 5px;
-  color: aliceblue;
-  width: 50px;
-  height: 10px
+  width: 100px;
+  height: 50px
 }
+#save, #delete{
+  width: 100px;
+  height: 50px;
+  text-align: center;
+  backgound-color: green;
+  color: darkgray;
+}
+
 </style>
