@@ -13,10 +13,15 @@ export default {
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 .header{
-  width: 1440px;
-  height: 117px;
+  width: 100vw;
+  height: 50px;
   left: 0px;
   top: 0px;
   background: #A4A0A0;
+  text-align: left;
 }
+h1{
+  padding-top: 10px;
+}
+
 </style>
