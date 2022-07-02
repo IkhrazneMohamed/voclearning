@@ -1,5 +1,6 @@
 <template>
   <div>
+<<<<<<< HEAD
     <h3 id="wordToPlay"></h3>
     <div>
       <input v-model="testAnswer" type="text" id="vocTest">
@@ -10,6 +11,11 @@
     <div>
       <button id="play-again" @click="pickFiveWords">Play again</button>
     </div>
+=======
+    <h2></h2>
+    <input v-model="testAnswer" type="text" id="vocTest">
+    <button id="submit" @click="checkTheWord">Submit</button>
+>>>>>>> 6c39badf0ee5818e3137fc42693ee071a4256d72
     <div id="right-answer" v-bind:style="{display: displayRight}">Congra! correct answer</div>
     <div id="false-answer" v-bind:style="{display: displayWrong}">Sorry! Wrong answer</div>
   </div>
@@ -110,7 +116,10 @@ export default {
     const myHeader = new Headers()
     myHeader.append('Accept', 'application/json')
     myHeader.append('Content-type', 'application/json')
+<<<<<<< HEAD
 
+=======
+>>>>>>> 6c39badf0ee5818e3137fc42693ee071a4256d72
     const requestOptions = {
       methods: 'GET',
       headers: myHeader,
