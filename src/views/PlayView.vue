@@ -10,11 +10,11 @@
       <button id="submit" @click="checkTheWord">Submit</button>
       <br>
       <div id="right-answer" v-bind:style="{display: displayRight}">Congra! correct answer</div>
+      <div id="false-answer" v-bind:style="{display: displayWrong}">Sorry! Wrong answer</div>
     </div>
     <div>
       <button id="play-again" @click="playAgain">Play again</button>
     </div>
-    <div id="false-answer" v-bind:style="{display: displayWrong}">Sorry! Wrong answer</div>
   </div>
 </template>
 
@@ -170,15 +170,17 @@ export default {
   border-top: none;
   width: 60vw;
   margin-left: 20vw;
-  height: 50vh;
+  height: 70vh;
   padding-top: 40px;
 }
 
 #animation{
-  width: 400px;
-  height: 400px;
+  width: 350px;
+  height: 350px;
   background-color: yellow;
   position: relative;
+  margin-left: 285px;
+  margin-bottom: 20px;
 }
 
 #wordToPlay{
@@ -192,6 +194,7 @@ export default {
 
 #right-answer,#false-answer{
   display: none;
+  margin-bottom: 10px;
 }
 
 #right-answer{
@@ -200,6 +203,17 @@ export default {
 
 #false-answer{
   color: red;
+}
+
+input{
+  margin-bottom: 20px;
+  width: 350px;
+}
+
+button{
+  margin-bottom: 20px;
+  padding: 5px 10px;
+  width: 350px;
 }
 
 </style>
