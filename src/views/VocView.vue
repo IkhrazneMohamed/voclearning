@@ -65,7 +65,7 @@ export default {
         redirect: 'follow'
       }
       if (this.word.length !== 0 && this.language.length !== 0 && this.translation.length !== 0 && this.transLanguage.length !== 0) {
-        fetch('http://localhost:8080/api/v1/wordtranslation', requestOptions).catch(error => console.log('error', error))
+        fetch('https://voclearner.herokuapp.com/api/v1/wordtranslation', requestOptions).catch(error => console.log('error', error))
       } else {
         alert('It\'s impossible ! All information are important')
       }
@@ -80,7 +80,7 @@ export default {
         body: wor,
         redirect: 'follow'
       }
-      fetch('http://localhost:8080/api/v1/wordtranslation', requestOptions).catch(error => console.log('error', error))
+      fetch('https://voclearner.herokuapp.com/api/v1/wordtranslation', requestOptions).catch(error => console.log('error', error))
     },
     changeTheData () {
       if (this.worddelete.length !== 0) {

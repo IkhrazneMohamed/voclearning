@@ -1,22 +1,19 @@
 <template>
-  <div>
-<<<<<<< HEAD
-    <h3 id="wordToPlay"></h3>
+  <div id="container">
+    <div id="animation">
+      <h3 id="wordToPlay">{{'run'}}</h3>
+    </div>
     <div>
       <input v-model="testAnswer" type="text" id="vocTest">
     </div>
     <div>
       <button id="submit" @click="checkTheWord">Submit</button>
+      <br>
+      <div id="right-answer" v-bind:style="{display: displayRight}">Congra! correct answer</div>
     </div>
     <div>
-      <button id="play-again" @click="pickFiveWords">Play again</button>
+      <button id="play-again" @click="playAgain">Play again</button>
     </div>
-=======
-    <h2></h2>
-    <input v-model="testAnswer" type="text" id="vocTest">
-    <button id="submit" @click="checkTheWord">Submit</button>
->>>>>>> 6c39badf0ee5818e3137fc42693ee071a4256d72
-    <div id="right-answer" v-bind:style="{display: displayRight}">Congra! correct answer</div>
     <div id="false-answer" v-bind:style="{display: displayWrong}">Sorry! Wrong answer</div>
   </div>
 </template>
@@ -35,108 +32,164 @@ export default {
       displayWrong: '',
       wordsList: [],
       howManySubmit: 0,
-      wordForPlay: [],
       updatedObject: {},
-      probability: 0
+      probability: 0,
+      wordData: {},
+      wordForPlay: '',
+      id: null,
+      helpBoolean: false
     }
   },
   methods: {
     checkTheWord () {
-      this.howManySubmit = this.howManySubmit + 1
-      if (this.howManySubmit === 3) {
-        this.howManySubmit = 0
-      }
-      if (this.wordTotranslate === this.testAnswer.trim()) {
-        this.displayRight = 'inline'
-        if (this.probability <= 1) {
-          this.probability = this.probability + 0.2
-          this.updateProbability()
+      for (let helper = 0; helper < this.wordData.uebersetzungSet.length; helper++) {
+        if (this.wordData.uebersetzungSet[helper].uebersetzung === this.testAnswer.trim()) {
+          this.displayRight = 'inline'
+          if (this.probability <= 1) {
+            this.probability = this.findTheNextWeightForPlus(this.wordData.uebersetzungSet[helper].wahrscheinlichkeit)
+            this.wordData.uebersetzungSet[helper].wahrscheinlichkeit = this.probability
+            this.updateProbability(this.wordData)
+            this.helpBoolean = true
+            break
+          }
         }
-      } else {
+      }
+      if (this.helpBoolean === false) {
         this.displayWrong = 'inline'
-        if (this.probability >= 0) {
-          this.probability = this.probability - 0.2
-          this.updateProbability()
+        for (let helpIndex = 0; helpIndex < this.wordData.uebersetzungSet.length; helpIndex++) {
+          this.probability = this.findTheNextWeightForMinus(this.wordData.uebersetzungSet[helpIndex].wahrscheinlichkeit)
+          this.wordData.uebersetzungSet[helpIndex].wahrscheinlichkeit = this.probability
+          this.updateProbability(this.wordData)
         }
       }
     },
     playAgain () {
+      this.displayAnimation()
       this.displayRight = ''
       this.displayWrong = ''
+      this.pickFiveWords()
     },
     pickFiveWords () {
-      console.log(this.wordsList)
-      let i = 0
       let weight = 0
-      const words = []
-      while (i <= 5) {
-        const randomNumber = Math.random()
-        if (randomNumber <= 1 && randomNumber > 0.8) {
-          weight = 1.0
-        } else if (randomNumber <= 0.8 && randomNumber > 0.5) {
-          weight = 0.8
-        } else {
-          // eslint-disable-next-line no-unused-vars
-          weight = 0.5
-        }
-        for (let j = 0; j < this.wordsList.length; j) {
-          if (this.wordsList[j].uebersetzungSet[0].wahscheinlichkeit === 1) {
-            console.log(this.wordsList[j])
-            words.push(this.wordsList[j])
-            break
-          }
-        }
-        i = i + 1
-        console.log(i)
+      const randomNumber = Math.random()
+      /* console.log(randomNumber) */
+      if (randomNumber <= 1 && randomNumber > 0.8) {
+        weight = 1.0
+      } else if (randomNumber <= 0.8 && randomNumber > 0.5) {
+        weight = 0.8
+      } else {
+        // eslint-disable-next-line no-unused-vars
+        weight = 0.5
       }
-      console.log(words)
-    }
-  },
-  playing () {
-    const number = 0
-    document.getElementById('wordToPlay').innerHTML = this.wordForPlay[number].wort
-  },
-  updateProbability () {
-    const myHeader = new Headers()
-    myHeader.append('Accept', 'application/json')
-    myHeader.append('Content-type', 'application/json')
+      /* console.log(weight) */
+      for (let j = 0; j < this.wordsList.length; j++) {
+        if (this.wordsList[j].uebersetzungSet[0].wahscheinlichkeit === weight) {
+          // eslint-disable-next-line no-unused-vars
+          this.wordData = this.wordsList[j]
+          break
+        }
+      }
+      if (Object.keys(this.wordData).length === 0) {
+        this.wordData = this.wordsList[0]
+        console.log(this.wordData)
+      }
+      this.wordForPlay = this.wordData.bezeichnung
+    },
+    updateProbability (dataToUpdate) {
+      this.displayAnimation()
+      const myHeader = new Headers()
+      myHeader.append('Content-type', 'application/json')
 
-    const requestOptions = {
-      methods: 'POST',
-      headers: myHeader,
-      body: this.probability,
-      redirect: 'follow'
-    }
+      const requestOptions = {
+        method: 'POST',
+        headers: myHeader,
+        body: JSON.stringify(dataToUpdate),
+        redirect: 'follow'
+      }
 
-    fetch('http://localhost:8080/api/v1/uebersetzung', requestOptions)
-      .then(response => response.json())
-      .catch(error => console.log('error', error))
+      fetch('https://voclearner.herokuapp.com/api/v1/uebersetzung', requestOptions)
+        .then(response => console.log(response.statusCode))
+        .catch(error => console.log('error', error))
+    },
+    findTheNextWeightForMinus (weight) {
+      switch (weight) {
+        case 1: return 0.8
+        case 0.8: return 0.5
+      }
+    },
+    findTheNextWeightForPlus (weight) {
+      switch (weight) {
+        case 1: return 1
+        case 0.8: return 1
+        case 0.5: return 0.8
+      }
+    },
+    displayAnimation () {
+      const elem = document.getElementById('wordToPlay')
+      let counter = 0
+      clearInterval(this.id)
+      this.id = setInterval(frame, 15)
+      function frame () {
+        if (counter === 350) {
+          clearInterval(this.id)
+        } else {
+          counter++
+          elem.style.top = counter + 'px'
+          elem.style.left = counter + 'px'
+        }
+      }
+    }
   },
   beforeMount () {
     const myHeader = new Headers()
     myHeader.append('Accept', 'application/json')
     myHeader.append('Content-type', 'application/json')
-<<<<<<< HEAD
 
-=======
->>>>>>> 6c39badf0ee5818e3137fc42693ee071a4256d72
     const requestOptions = {
       methods: 'GET',
       headers: myHeader,
       redirect: 'follow'
     }
-    fetch('http://localhost:8080/api/v1/words', requestOptions)
+    fetch('https://voclearner.herokuapp.com/api/v1/words', requestOptions)
       .then(response => response.json())
       // eslint-disable-next-line no-return-assign
       .then(result => result.forEach(data => {
         this.wordsList.push(data)
+        console.log(this.wordsList)
       }))
       .catch(error => console.log('error', error))
   }
 }
+
 </script>
 
 <style scoped>
+#container{
+  border-style: groove;
+  border-width: 2px;
+  border-top: none;
+  width: 60vw;
+  margin-left: 20vw;
+  height: 50vh;
+  padding-top: 40px;
+}
+
+#animation{
+  width: 400px;
+  height: 400px;
+  background-color: yellow;
+  position: relative;
+}
+
+#wordToPlay{
+  width: 50px;
+  height: 50px;
+  color: blue;
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  font-size: medium;
+  position: absolute;
+}
+
 #right-answer,#false-answer{
   display: none;
 }
@@ -144,7 +197,9 @@ export default {
 #right-answer{
   color: green;
 }
+
 #false-answer{
   color: red;
 }
+
 </style>
