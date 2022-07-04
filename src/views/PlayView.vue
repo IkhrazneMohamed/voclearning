@@ -1,7 +1,7 @@
 <template>
   <div id="container">
     <div id="animation">
-      <h3 id="wordToPlay">{{'run'}}</h3>
+      <h3 id="wordToPlay">{{wordForPlay}}</h3>
     </div>
     <div>
       <input v-model="testAnswer" type="text" id="vocTest">
@@ -45,13 +45,11 @@ export default {
       for (let helper = 0; helper < this.wordData.uebersetzungSet.length; helper++) {
         if (this.wordData.uebersetzungSet[helper].uebersetzung === this.testAnswer.trim()) {
           this.displayRight = 'inline'
-          if (this.probability <= 1) {
-            this.probability = this.findTheNextWeightForPlus(this.wordData.uebersetzungSet[helper].wahrscheinlichkeit)
-            this.wordData.uebersetzungSet[helper].wahrscheinlichkeit = this.probability
-            this.updateProbability(this.wordData)
-            this.helpBoolean = true
-            break
-          }
+          this.probability = this.findTheNextWeightForPlus(this.wordData.uebersetzungSet[helper].wahrscheinlichkeit)
+          this.wordData.uebersetzungSet[helper].wahrscheinlichkeit = this.probability
+          this.updateProbability(this.wordData)
+          this.helpBoolean = true
+          break
         }
       }
       if (this.helpBoolean === false) {
@@ -64,17 +62,19 @@ export default {
       }
     },
     playAgain () {
-      this.displayAnimation()
       this.displayRight = ''
       this.displayWrong = ''
+      this.wordForPlay = ''
       this.pickFiveWords()
+      this.displayAnimation()
     },
     pickFiveWords () {
+      this.wordData = {}
       let weight = 0
       const randomNumber = Math.random()
       /* console.log(randomNumber) */
       if (randomNumber <= 1 && randomNumber > 0.8) {
-        weight = 1.0
+        weight = 1
       } else if (randomNumber <= 0.8 && randomNumber > 0.5) {
         weight = 0.8
       } else {
@@ -82,16 +82,19 @@ export default {
         weight = 0.5
       }
       /* console.log(weight) */
-      for (let j = 0; j < this.wordsList.length; j++) {
-        if (this.wordsList[j].uebersetzungSet[0].wahscheinlichkeit === weight) {
-          // eslint-disable-next-line no-unused-vars
-          this.wordData = this.wordsList[j]
-          break
+      for (let j = Math.floor(Math.random() * this.wordsList.length); j < this.wordsList.length; j++) {
+        console.log(j)
+        for (let secondeHelper = 0; secondeHelper < this.wordsList[j].uebersetzungSet.length; secondeHelper++) {
+          if (this.wordsList[j].uebersetzungSet[secondeHelper].wahrscheinlichkeit === weight) {
+            this.wordData = this.wordsList[j]
+            console.log(this.wordData)
+            break
+          }
         }
       }
       if (Object.keys(this.wordData).length === 0) {
-        this.wordData = this.wordsList[0]
-        console.log(this.wordData)
+        const number = Math.floor(Math.random() * (this.wordsList.length))
+        this.wordData = this.wordsList[number]
       }
       this.wordForPlay = this.wordData.bezeichnung
     },
